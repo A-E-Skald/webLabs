@@ -41,53 +41,60 @@ def posts_list():
     ]
 
 
-# для тестов 4 лабы - тесты влезают в бд и изменют ее, потому копирую бд в app_back и потом восстаналиваю обратно
 
+# app/tests/conftest.py
 import shutil
 from pathlib import Path
 import pytest
 
-# пути относительно этого файла: ../instance/app.db
-INSTANCE_DB = Path(__file__).resolve().parents[1] / 'instance' / 'app.db'
-BACKUP_DB = INSTANCE_DB.parent / 'app_back.db'
+# project_root — предполагается: project/... , файл conftest.py в app/tests
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+# Жёстко: источник — project_root/instance/app.db
+SOURCE_DB = PROJECT_ROOT / 'instance' / 'app.db'
+# Резервная копия — project_root/app/app_back.db
+BACKUP_DB = PROJECT_ROOT / 'app' / 'app_back.db'
 
 @pytest.fixture(scope='session', autouse=True)
 def backup_and_restore_instance_db():
     """
-    Автобэкап instance/app.db -> instance/app_back.db перед тестами
-    и восстановление после всех тестов.
-    Выполняется автоматически для всей сессии pytest.
+    1) Перед тестовой сессией: если instance/app.db существует -> копируем в app/app_back.db
+       (если не существует — отмечаем, что бэкапа не делали).
+    2) После тестов: если бэкап был сделан — копируем app/app_back.db обратно в instance/app.db.
+    Бэкап НЕ удаляется автоматически.
     """
-    # backup
-    if INSTANCE_DB.exists():
-        shutil.copy2(INSTANCE_DB, BACKUP_DB)
-    else:
-        # если исходной БД нет — создаём пустой файл-бэкап,
-        # чтобы при restore не получить FileNotFoundError
-        BACKUP_DB.parent.mkdir(parents=True, exist_ok=True)
-        BACKUP_DB.write_bytes(b'')
+    # гарантируем папки
+    BACKUP_DB.parent.mkdir(parents=True, exist_ok=True)
+    SOURCE_DB.parent.mkdir(parents=True, exist_ok=True)
 
+    did_backup = False
     try:
+        if SOURCE_DB.exists():
+            shutil.copy2(SOURCE_DB, BACKUP_DB)
+            did_backup = True
+            print(f"[conftest] Backup created: {BACKUP_DB} <- {SOURCE_DB}")
+        else:
+            # источник не найден — ничего не копируем, но оставляем бэкап нетронутым
+            print(f"[conftest] Source DB not found: {SOURCE_DB}. No backup created.")
         yield
     finally:
-        # перед восстановлением попробуем корректно закрыть возможные
-        # открытые соединения SQLAlchemy, чтобы не было блокировки файла.
+        # попытка аккуратно закрыть SQLAlchemy, если он подключён (снимает lock на sqlite)
         try:
-            # импорт локальный чтобы избежать проблем при раннем импорте
-            from app.models import db
-            # закрыть сессии и отключить движок
-            db.session.remove()
-            db.engine.dispose()
+            from app.models import db as sa_db
+            sa_db.session.remove()
+            sa_db.engine.dispose()
         except Exception:
-            # если не получилось — продолжаем всё равно пытаться восстановить файл
             pass
 
-        # restore (копируем бэкап обратно в instance/app.db)
-        if BACKUP_DB.exists():
-            shutil.copy2(BACKUP_DB, INSTANCE_DB)
-            # опционально удаляем бэкап
+        # восстанавливаем только если ранее сделали бэкап
+        if did_backup and BACKUP_DB.exists():
             try:
-                BACKUP_DB.unlink()
-            except Exception:
-                pass
-
+                shutil.copy2(BACKUP_DB, SOURCE_DB)
+                print(f"[conftest] Restored: {SOURCE_DB} <- {BACKUP_DB}")
+            except Exception as exc:
+                print(f"[conftest] ERROR restoring DB: {exc}")
+        else:
+            if not did_backup:
+                print("[conftest] No backup was created before tests; restore skipped.")
+            else:
+                print(f"[conftest] Backup file missing ({BACKUP_DB}); restore skipped.")
