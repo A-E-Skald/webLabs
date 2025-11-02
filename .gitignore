@@ -1,0 +1,9 @@
+app/instance/
+app/app.db
+*.pyc
+__pycache__/
+.venv/
+venv/
+.env
+*.sqlite
+
