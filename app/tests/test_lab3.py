@@ -4,8 +4,8 @@ import urllib.parse
 import pytest
 from werkzeug.security import generate_password_hash
 
-from app import app as flask_app
-from models import User, db
+from app.app import app as flask_app
+from app.models import User, db
 
 
 TEST_USER = "admin"

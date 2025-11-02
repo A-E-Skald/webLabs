@@ -2,8 +2,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Role
-from validators import validate_user_input, validate_password
+from app.models import db, User, Role
+from app.validators import validate_user_input, validate_password
 
 users_bp = Blueprint('users', __name__, template_folder='templates')
 

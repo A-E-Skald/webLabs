@@ -1,7 +1,7 @@
 import pytest
 from flask import template_rendered
 from contextlib import contextmanager
-from app import app
+from app.app import app
 
 @contextmanager
 def captured_templates(app):

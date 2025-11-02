@@ -1,7 +1,7 @@
 import pytest
 from flask import template_rendered
 from contextlib import contextmanager
-from app import posts_list, app
+from app.app import posts_list, app
 
 @contextmanager
 def captured_templates(app):

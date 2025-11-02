@@ -8,9 +8,10 @@ import werkzeug
 from functools import lru_cache
 from faker import Faker
 import re
-from models import db, User as DBUser, Role
-from users import users_bp
+from app.models import db, User as DBUser, Role
+from app.users import users_bp
 from pathlib import Path
+import os
 
 
 fake = Faker()
@@ -19,9 +20,23 @@ fake = Faker()
 app = Flask(__name__)
 application = app
 
-basedir = Path(__file__).resolve().parent
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + str(basedir / 'instance' / 'app.db')
+from pathlib import Path
+import os
+
+# гарантируем существование instance folder и правильный абсолютный путь к файлу БД
+os.makedirs(app.instance_path, exist_ok=True)   # создаст app/instance если нужно
+
+db_file = Path(app.instance_path) / 'app.db'
+# для логов и отладки — покажем путь в лог gunicorn
+app.logger.info(f"Using sqlite DB at: {db_file.resolve()} (exists: {db_file.exists()})")
+
+# используем абсолютный путь в URI
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_file.resolve()}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# (опционально) если хочешь отключить проверку same-thread (необязательно для gunicorn workers)
+# app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"connect_args": {"check_same_thread": False}}
+
 
 db.init_app(app)
 
@@ -211,7 +226,7 @@ def phone_check():
 
 
 
-app.config['SECRET_KEY'] = 'replace-this-secret-for-prod'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','replace-this-secret-for-prod')
 # срок для remember me
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=7)
 

@@ -5,9 +5,9 @@ from werkzeug.security import generate_password_hash
 from flask import url_for
 
 # импорт приложения и моделей
-from app import app as flask_app
-from models import db, User, Role
-from validators import validate_password
+from app.app import app as flask_app
+from app.models import db, User, Role
+from app.validators import validate_password
 
 
 

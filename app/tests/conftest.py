@@ -2,7 +2,7 @@ import pytest
 from datetime import datetime, timedelta
 from flask import template_rendered
 from contextlib import contextmanager
-from app import app as flask_app   # если app/app.py существует
+from app.app import app as flask_app   # если app/app.py существует
 
 @pytest.fixture
 def app():
