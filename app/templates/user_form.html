@@ -1,0 +1,7 @@
+{% from "_user_form.html" import user_form %}
+{% extends "base.html" %}
+{% block content %}
+  <h2>{% if edit %}Редактирование пользователя{% else %}Создать пользователя{% endif %}</h2>
+  {{ user_form(form or {}, errors or {}, roles, edit=edit|default(false)) }}
+{% endblock %}
+

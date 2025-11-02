@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container mt-4">
+    <h2>{{ title }}</h2>
+    {% if message %}
+      <div class="alert alert-info">{{ message }}</div>
+    {% endif %}
+    <table class="table table-sm table-bordered table-params">
+      <thead><tr><th>Ключ</th><th>Значение</th></tr></thead>
+      <tbody>
+        {% for k, v in items.items() %}
+          <tr>
+            <td>{{ k }}</td>
+            <td>
+              {% if v is iterable and v is not string %}
+                {{ v }}
+              {% else %}
+                {{ v }}
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="2">Нет данных</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

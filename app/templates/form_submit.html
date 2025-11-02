@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container mt-4">
+    <h2>Тестовая форма</h2>
+    <form method="post" action="{{ url_for('show_form_params') }}">
+      <div class="mb-3">
+        <label class="form-label">Поле A</label>
+        <input name="a" class="form-control" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Поле B</label>
+        <input name="b" class="form-control" />
+      </div>
+      <button class="btn btn-primary" type="submit">Отправить</button>
+    </form>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,48 @@
+{# templates/_user_form.html #}
+{% macro user_form(form, errors, roles, edit=False) %}
+<form method="post" novalidate>
+  {% if not edit %}
+  <div class="mb-3">
+    <label for="login">Логин</label>
+    <input name="login" id="login" class="form-control {% if errors.login %}is-invalid{% endif %}" value="{{ form.get('login','') }}">
+    {% if errors.login %}<div class="invalid-feedback">{{ errors.login }}</div>{% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label for="password">Пароль</label>
+    <input name="password" id="password" type="password" class="form-control {% if errors.password %}is-invalid{% endif %}">
+    {% if errors.password %}<div class="invalid-feedback">{{ errors.password }}</div>{% endif %}
+  </div>
+  {% endif %}
+
+  <div class="mb-3">
+    <label for="last_name">Фамилия</label>
+    <input name="last_name" id="last_name" class="form-control {% if errors.last_name %}is-invalid{% endif %}" value="{{ form.get('last_name','') }}">
+    {% if errors.last_name %}<div class="invalid-feedback">{{ errors.last_name }}</div>{% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label for="first_name">Имя</label>
+    <input name="first_name" id="first_name" class="form-control {% if errors.first_name %}is-invalid{% endif %}" value="{{ form.get('first_name','') }}">
+    {% if errors.first_name %}<div class="invalid-feedback">{{ errors.first_name }}</div>{% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label for="patronymic">Отчество</label>
+    <input name="patronymic" id="patronymic" class="form-control" value="{{ form.get('patronymic','') }}">
+  </div>
+
+  <div class="mb-3">
+    <label for="role">Роль</label>
+    <select name="role" id="role" class="form-select">
+      <option value="">— Без роли —</option>
+      {% for r in roles %}
+        <option value="{{ r.id }}" {% if form.get('role') and form.get('role')|string == r.id|string %}selected{% endif %}>{{ r.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button class="btn btn-primary" type="submit">Сохранить</button>
+</form>
+{% endmacro %}
+

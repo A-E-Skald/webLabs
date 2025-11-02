@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+  <h1>Главная</h1>
+  {% if current_user.is_authenticated %}
+    <p>Пользователь {{ current_user.fio() or current_user.login }} вошёл в систему.</p>
+  {% else %}
+    <p>Вы не вошли в систему.</p>
+  {% endif %}
+  <p>Резкая боль в животе заставила Зориана распахнуть глаза. Он дернулся всем телом, прогибаясь под упавшим на него предметом, сон как рукой сняло.</p>
+{% endblock %}

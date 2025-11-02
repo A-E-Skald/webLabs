@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Проверка номера телефона</h2>
+  <form method="post" novalidate>
+    <div class="mb-3">
+      <label for="phone" class="form-label">Номер телефона</label>
+      <input id="phone" name="phone" class="form-control {% if invalid_type %}is-invalid{% endif %}" value="{{ phone }}">
+      {% if error %}
+        <div class="invalid-feedback">
+          {{ error }}
+        </div>
+      {% endif %}
+    </div>
+    <button class="btn btn-primary" type="submit">Проверить</button>
+  </form>
+
+  {% if formatted %}
+    <div class="mt-3">
+      <h5>Отформатировано:</h5>
+      <div class="alert alert-success">{{ formatted }}</div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

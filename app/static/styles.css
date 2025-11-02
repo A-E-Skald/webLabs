@@ -1,0 +1,60 @@
+
+body {
+    font-size: 1.25rem;
+    background-color: #2b2b2b;
+    color: #c5c5c5; 
+}
+
+.card {
+    background-color: #383838;
+    color: #d0d0d0;
+}
+
+.table-params {
+    color: #c5c5c5; 
+}
+
+nav.navbar {
+    background-color: #242323 !important; 
+    color: #c5c5c5 !important; 
+}
+
+nav.navbar a.nav-link, nav.navbar .navbar-brand {
+    color: #c5c5c5 !important;
+}
+
+footer {
+    background-color: #242323 !important; 
+    color: #c5c5c5 !important; 
+}
+
+/* ссылки и кнопки */
+a, .btn-primary {
+    color: #e0e0e0;
+}
+
+a:hover, .btn-primary:hover {
+    color: #ffffff;
+}
+
+.avatar {
+    max-width: 100%;
+}
+
+/* форма комментариев */
+form textarea, form input {
+    background-color: #3a3a3a;
+    color: #d0d0d0;
+    border: 1px solid #555;
+}
+
+form button {
+    background-color: #4a4a4a;
+    color: #e0e0e0;
+    border: 1px solid #666;
+}
+
+form button:hover {
+    background-color: #5a5a5a;
+}
+
